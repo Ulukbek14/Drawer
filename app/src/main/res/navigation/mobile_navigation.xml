@@ -13,9 +13,6 @@
         <action
             android:id="@+id/action_nav_home_to_formFragment"
             app:destination="@id/formFragment" />
-        <action
-            android:id="@+id/action_nav_home_to_formFragment2"
-            app:destination="@id/formFragment" />
     </fragment>
 
     <fragment

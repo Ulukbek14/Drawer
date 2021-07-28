@@ -26,11 +26,9 @@
         app:itemIconTint="#B1B1B1"
         app:menu="@menu/activity_main_drawer">
 
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
             <View
                 android:background="#B1B1B1"
                 app:layout_constraintTop_toTopOf="parent"
@@ -49,8 +47,8 @@
                 android:layout_marginLeft="20dp"
                 android:textColor="#FFC107"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
-
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.navigation.NavigationView>
+
 </androidx.drawerlayout.widget.DrawerLayout>

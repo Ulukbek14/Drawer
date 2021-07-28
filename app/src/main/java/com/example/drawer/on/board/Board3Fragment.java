@@ -23,8 +23,14 @@ public class Board3Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentBoard3Binding.inflate(getLayoutInflater(), container, false);
-        setClickSkip2();
+
         return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setClickSkip2();
     }
 
     private void setClickSkip2() {
@@ -32,8 +38,12 @@ public class Board3Fragment extends Fragment {
             PreferenceHelper helper = new PreferenceHelper();
             helper.unit(requireContext());
             helper.onSaveOnBoardState();
-            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_content_main);
-            navController.navigate(R.id.nav_home);
+            close();
         });
+    }
+
+    public void close() {
+        NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_content_main);
+        navController.navigateUp();
     }
 }

@@ -19,15 +19,23 @@ public class Board2Fragment extends Fragment {
 
     FragmentBoard2Binding binding;
 
-//getActivity().getSupportFragmentManager()
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
         binding = FragmentBoard2Binding.inflate(getLayoutInflater(), container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+        setupViewPager();
+    }
+
+    private void setupViewPager() {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
         binding.viewPager.setAdapter(viewPagerAdapter);
         binding.tabLayout.setupWithViewPager(binding.viewPager, true);
-        return binding.getRoot();
     }
 }

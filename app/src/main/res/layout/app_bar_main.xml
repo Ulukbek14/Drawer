@@ -7,17 +7,32 @@
     tools:context=".MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar"
+        android:gravity="center_horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/Theme.Drawer.AppBarOverlay">
 
         <androidx.appcompat.widget.Toolbar
+            android:backgroundTint="#131212"
             android:id="@+id/toolbar"
+            android:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/Theme.Drawer.PopupOverlay">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    android:text="Заметки"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:textColor="#B1B1B1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </FrameLayout>
         </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>

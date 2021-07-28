@@ -22,19 +22,27 @@ public class Board4Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentBoard4Binding.inflate(getLayoutInflater(), container, false);
-        setClickStart();
         return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setClickStart();
     }
 
     private void setClickStart() {
         binding.tvStart.setOnClickListener(v -> {
-            PreferenceHelper prefHelper  = new PreferenceHelper();
+            PreferenceHelper prefHelper = new PreferenceHelper();
             prefHelper.unit(requireContext());
             prefHelper.onSaveOnBoardState();
-            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_content_main);
-            navController.navigate(R.id.nav_home);
+            close();
         });
+    }
 
-
+    public void close() {
+        NavController navController = Navigation.findNavController(requireActivity(),
+                R.id.nav_host_fragment_content_main);
+        navController.navigateUp();
     }
 }
