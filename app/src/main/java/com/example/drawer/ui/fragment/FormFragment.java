@@ -1,13 +1,26 @@
 package com.example.drawer.ui.fragment;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.contentcapture.ContentCaptureCondition;
@@ -21,14 +34,21 @@ import com.example.drawer.databinding.FragmentFormBinding;
 import com.example.drawer.model.TaskModel;
 import com.example.drawer.room.MyApp;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Locale;
+
 public class FormFragment extends Fragment {
 
+    private static final int RECORD_AUDIO_REQUEST_CODE = 5;
     private FragmentFormBinding binding;
     private TaskModel taskModel;
     private TaskModel model;
     public final static String REQUEST_KEY = "res";
     public final static String BUNDLE_KEY = "done";
     public final static String BUNDLE_UPDATE_KEY = "updateDone";
+    private final Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,6 +63,109 @@ public class FormFragment extends Fragment {
         initClickListener();
         getDataForEdit();
         setFocusForEditText();
+        checkPermissions();
+        initSpeechRecognizer();
+        setRecognitionListener();
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void setRecognitionListener() {
+        SpeechRecognizer.createSpeechRecognizer(requireContext());
+        SpeechRecognizer recognizer = SpeechRecognizer.createSpeechRecognizer(requireContext());
+        recognizer.setRecognitionListener(new RecognitionListener() {
+            @Override
+            public void onReadyForSpeech(Bundle params) {
+
+            }
+
+            @Override
+            public void onBeginningOfSpeech() {
+
+            }
+
+            @Override
+            public void onRmsChanged(float rmsdB) {
+
+            }
+
+            @Override
+            public void onBufferReceived(byte[] buffer) {
+
+            }
+
+            @Override
+            public void onEndOfSpeech() {
+                binding.fabVoice.setImageResource(R.drawable.ic_baseline_keyboard_voice_24);
+                binding.etTitle.setHint(R.string.input_text);
+            }
+
+            @Override
+            public void onError(int error) {
+                binding.fabVoice.setImageResource(R.drawable.ic_baseline_mic_none_24);
+                binding.etTitle.setHint(R.string.text_of_voice_error);
+                recognizer.cancel();
+            }
+
+            @Override
+            public void onResults(Bundle results) {
+                binding.fabVoice.setImageResource(R.drawable.ic_baseline_keyboard_voice_24);
+                ArrayList<String> data = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+                binding.etTitle.setText(data.get(0));
+            }
+
+            @Override
+            public void onPartialResults(Bundle partialResults) {
+
+            }
+
+            @Override
+            public void onEvent(int eventType, Bundle params) {
+
+            }
+        });
+        binding.fabVoice.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                binding.etTitle.setText("");
+                binding.etTitle.setHint(R.string.listening);
+                binding.fabVoice.setImageResource(R.drawable.ic_baseline_record_voice_over_24);
+                recognizer.startListening(speechIntent);
+            }
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                binding.fabVoice.setImageResource(R.drawable.ic_baseline_mic_none_24);
+                recognizer.stopListening();
+            }
+            return false;
+        });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull @NotNull String[] permissions,
+                                           @NonNull @NotNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == RECORD_AUDIO_REQUEST_CODE && grantResults.length > 0) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) ;
+        }
+    }
+
+    public void initSpeechRecognizer() {
+        speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+
+    }
+
+    private void checkPermissions() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED) {
+            checkPermission();
+        }
+    }
+
+    private void checkPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            ActivityCompat.requestPermissions(requireActivity(), new String[]{
+                    Manifest.permission.RECORD_AUDIO}, RECORD_AUDIO_REQUEST_CODE);
+        }
     }
 
     private void getDataForEdit() {
@@ -57,7 +180,7 @@ public class FormFragment extends Fragment {
     private void setFocusForEditText() {
         binding.etTitle.post(() -> {
             InputMethodManager inputMethodManager =
-                    (InputMethodManager) getContext()
+                    (InputMethodManager) requireActivity()
                             .getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.toggleSoftInputFromWindow(
                     binding.etTitle.getApplicationWindowToken(),
@@ -71,8 +194,9 @@ public class FormFragment extends Fragment {
                 requireActivity(), R.id.nav_host_fragment_content_main);
         binding.tvDone.setOnClickListener(v -> {
             if (binding.etTitle.getText().toString().trim().equals("")) {
-                binding.etTitle.setError("Введите текст");
-                YoYo.with(Techniques.SlideInDown  )
+                binding.etTitle.setError(getString(R.string.text_of_error));
+                binding.etTitle.getError().charAt(4);
+                YoYo.with(Techniques.Shake)
                         .duration(1008)
                         .repeat(1)
                         .playOn(binding.tvDone);
@@ -92,7 +216,23 @@ public class FormFragment extends Fragment {
             getParentFragmentManager().setFragmentResult(REQUEST_KEY, bundle);
             close();
         });
-        binding.ivArrowBack.setOnClickListener(v -> navController.navigateUp());
+        binding.ivArrowBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                close();
+                keyboardHide();
+            }
+        });
+    }
+
+    private void keyboardHide() {
+        InputMethodManager inputManager = (InputMethodManager)
+                requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        View view = requireActivity().getCurrentFocus();
+        if (view == null) {
+            view = new View(getActivity());
+        }
+        inputManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     public void close() {

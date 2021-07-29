@@ -20,13 +20,13 @@ import java.util.List;
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
     List<TaskModel> list;
     List<TaskModel> filteredData;
-    public ItemOnClickListener itemClickListener;
+    public ItemOnClickListener itemOnClickListener;
     public boolean isList;
 
     public TaskAdapter(boolean isList, ItemOnClickListener itemClickListener) {
         this.list = new ArrayList<>();
         this.filteredData = new ArrayList<>();
-        this.itemClickListener = itemClickListener;
+        this.itemOnClickListener = itemClickListener;
         this.isList = isList;
     }
 
@@ -73,7 +73,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             txtTitle.setText(taskModel.getTitle());
 
             itemView.setOnClickListener(v -> {
-                itemClickListener.onItemClick(getAdapterPosition(), taskModel);
+                itemOnClickListener.onItemClick(getAdapterPosition(), taskModel);
             });
         }
     }

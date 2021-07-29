@@ -13,4 +13,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="text_of_dialog">Удалить фото профиля?</string>
+    <string name="input_text">Введите текст</string>
+    <string name="text_of_voice_error">Не удалось распозанть запрос</string>
+    <string name="listening">Говорите...</string>
+    <string name="text_of_error">Введите текст</string>
 </resources>
