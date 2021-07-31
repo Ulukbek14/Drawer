@@ -60,7 +60,7 @@
 
     <EditText
         android:id="@+id/et_title"
-        android:hint="Input Title"
+        android:hint="Enter Title"
         android:textColorHint="#B1B1B1"
         android:textColorHighlight="@color/white"
         android:gravity="start"
